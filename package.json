@@ -1,8 +1,8 @@
 {
-  "name": "goit-react-hw-06-phonebook",
+  "name": "goit-react-hw-07-phonebook",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://ArtemStepanov1.github.io/goit-react-hw-06-phonebook/",
+  "homepage": "https://ArtemStepanov1.github.io/goit-react-hw-07-phonebook/",
   "dependencies": {
     "@emotion/react": "^11.10.0",
     "@mdx-js/react": "^1.6.22",
