@@ -1,40 +1,24 @@
-import { MdClose } from "react-icons/md"
-import { useDispatch, useSelector } from "react-redux"
-import { deleteContact } from "redux/contactsSlice"
-import {
-    ContactList,
-    ContactItem,
-    DelContactBtn,
-} from "./ContactsList.styled"
+import { useSelector } from "react-redux";
+import { ContactList, Spin } from "./ContactsList.styled";
+import { ContactListItem } from "../ContactListItem/ContactListItem";
+import { useFetchContactsQuery } from "redux/contactsSlice";
 
 export const ContactsList = () => {
-    const dispatch = useDispatch();
+    const { data: contacts, isLoading } = useFetchContactsQuery();
     const filter = useSelector(state => state.filter);
-    const filteredContacts = useSelector(state => 
-        state.contacts.filter(item =>
-            item.name.toLowerCase().includes(filter.toLowerCase())
-            )
-        );
-      
-    
+    const filteredContacts = contacts?.filter(item =>
+            item.name.toLowerCase().includes(filter.toLowerCase()));
     return(
-        <ContactList>
-            {filteredContacts.map(contact => {
-                const {id, name, number} = contact;
-                return (              
-                <ContactItem key={id}>
-                    <label>{`${name}: ${number}`}</label>
-                    <DelContactBtn
-                        type="button"
-                        onClick={() => dispatch(deleteContact(id))}
-                        >
-                            <MdClose
-                                className="delContactBtnIcon"                            
-                            />
-                    </DelContactBtn>
-                </ContactItem>)
-            }
+        <>
+            {isLoading ? (
+                <Spin />
+            ) : (
+                <ContactList>
+                    {filteredContacts?.map(contact => (
+                        <ContactListItem key={contact.id} {...contact} />
+                    ))}
+                </ContactList>
             )}
-        </ContactList>     
+        </>
     )
 }

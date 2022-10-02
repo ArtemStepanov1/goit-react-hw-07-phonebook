@@ -16,9 +16,9 @@ export const Filter = () => {
         }}>
             Find contact by name 
             <input 
-            type="text" 
-            value={filter}
-            onChange={e => dispatch(change(e.target.value))}
+                type="text" 
+                value={filter}
+                onChange={e => dispatch(change(e.target.value))}
             ></input>
         </label>
     )

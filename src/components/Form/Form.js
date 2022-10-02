@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useDispatch } from 'react-redux';
-import { addContact } from 'redux/contactsSlice';
+import { useCreateContactMutation } from 'redux/contactsSlice';
+import { Spinner } from "theme-ui";
 import {
     FormWrapper,
     NameInput,
@@ -8,10 +8,9 @@ import {
 } from "./Form.styled.js";
 
 export const ContactsForm = () => {
-
-    const [name, setName] = useState('')
-    const [number, setNumber] = useState('')
-    const dispatch = useDispatch();
+    const [createContact, {isLoading}] = useCreateContactMutation();
+    const [name, setName] = useState('');
+    const [phone, setPhone] = useState('');
 
     const handleChange = e => {
         const {name, value} = e.currentTarget;
@@ -20,8 +19,8 @@ export const ContactsForm = () => {
               setName(value);
               break;
       
-            case 'number':
-              setNumber(value);
+            case 'phone':
+                setPhone(value);
               break;
       
             default:
@@ -31,13 +30,14 @@ export const ContactsForm = () => {
 
     const handleSubmit = e => {
         e.preventDefault();
-        dispatch(addContact(name, number));
+        const contact = {name, phone};
+        createContact(contact);
         reset();
     };
 
     const reset = () => {
         setName('');
-        setNumber('');
+        setPhone('');
     };
     
     return (
@@ -57,16 +57,18 @@ export const ContactsForm = () => {
             <p>Phone number</p>
             <input
                 type="tel"
-                name="number"
+                name="phone"
                 pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
                 title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
                 required
-                value={number}
+                value={phone}
                 onChange={handleChange}
             />
             <ContactsFormBtn
-            type="submit"
-            >Add contact</ContactsFormBtn>
+            type="submit" disabled={isLoading}
+            >
+                {isLoading ? <Spinner  width={16} height={16}/> : 'Add contact' }
+            </ContactsFormBtn>
         </FormWrapper>
     )
 }

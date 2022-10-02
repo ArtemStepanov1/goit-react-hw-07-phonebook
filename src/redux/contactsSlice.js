@@ -1,27 +1,39 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { nanoid } from "nanoid";
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-const contactsSlice = createSlice({
-    name: "contacts",
-    initialState: [],
-    reducers: {
-        addContact: {
-            reducer: (state, action) => {
-                const isAdded = state.find(i => i.name.toLowerCase() === action.payload.name.toLowerCase());
-                if(isAdded) return alert(`${action.payload.name} is already in phonebook.`)
-                state.push(action.payload);
-            },
-            prepare: (name, number) => {
-                const id = nanoid();
-                return {payload: { id, name, number }};
-                        
-            },
-        },    
-        deleteContact(state, action) {
-            return state.filter(contact => contact.id !== action.payload);
+export const contactsApi = createApi({
+  reducerPath: 'contactsApi',
+  baseQuery: fetchBaseQuery({
+    baseUrl: 'https://63370e4165d1e8ef26791f9d.mockapi.io/api/v1/',
+  }),
+  tagTypes: ['Contact'],
+  endpoints: (builder) => ({
+    fetchContacts: builder.query({
+      query: () => 'contacts',
+      providesTags: ['Contact'],
+    }),
+    deleteContact: builder.mutation({
+      query: contactId => ({
+        url: `/contacts/${contactId}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Contact'],
+    }),
+    createContact: builder.mutation({
+      query: ({name, phone}) => ({
+        url: '/contacts',
+        method: 'POST',
+        body: {
+          name,
+          phone,
         },
-    },
-})
+      }),
+      invalidatesTags: ['Contact'],
+    }),
+  }),
+});
 
-export const { addContact, deleteContact } = contactsSlice.actions;
-export const contactsReducer = contactsSlice.reducer;
+export const {
+  useFetchContactsQuery,
+  useDeleteContactMutation,
+  useCreateContactMutation,
+} = contactsApi;
